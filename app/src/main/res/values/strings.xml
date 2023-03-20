@@ -3,6 +3,6 @@
     <string name="label_import_text_file">Import File</string>
     <string name="label_export_selected_range">Export Selection</string>
     <string name="label_no_selected_range" tools:ignore="ExtraTranslation">No Selected Range</string>
-    <string name="label_exported_range_to_filename" tools:ignore="ExtraTranslation">Exported range to %s</string>
+    <string name="label_exported_range_to_filename" tools:ignore="ExtraTranslation">Exported wave to %s</string>
 
 </resources>
