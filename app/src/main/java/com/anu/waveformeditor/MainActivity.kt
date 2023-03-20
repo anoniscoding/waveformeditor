@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         val file = File(downloadsDir, filename)
         file.writeText(content)
 
-        displayMessage(getString(R.string.label_exported_range_to_filename, filename))
+        displayMessage(getString(R.string.label_exported_wave_to_filename, filename))
     }
 
     private suspend fun parseWaveformData(uri: Uri): List<Pair<Float, Float>> {
