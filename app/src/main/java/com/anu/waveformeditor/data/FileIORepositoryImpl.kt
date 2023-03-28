@@ -21,10 +21,7 @@ class FileIORepositoryImpl(
 
     override suspend fun writeWaveFormDataToUri(waveformData: List<Pair<Float, Float>>): String {
         return withContext(Dispatchers.IO) {
-            val downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            val filename = "selected_range_${System.currentTimeMillis()}.txt"
-            val file = File(downloadsFolder, filename)
-            val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+            val (filename, uri) = getFilenameWithUri()
 
             contentResolver.openOutputStream(uri)?.use { outputStream ->
                 BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
@@ -35,5 +32,14 @@ class FileIORepositoryImpl(
             }
             filename
         }
+    }
+
+    private fun getFilenameWithUri(): Pair<String, Uri> {
+        val downloadsFolder =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val filename = "selected_waveform_${System.currentTimeMillis()}.txt"
+        val file = File(downloadsFolder, filename)
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+        return Pair(filename, uri)
     }
 }
