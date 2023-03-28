@@ -43,6 +43,10 @@ class MainActivity : AppCompatActivity() {
         waveformView = findViewById(R.id.waveform_view)
         exportButton = findViewById(R.id.export_button)
         importButton = findViewById(R.id.import_button)
+
+        viewModel.viewData.observe(this) {
+            onViewDataReceived(it)
+        }
     }
 
     override fun onResume() {
@@ -54,10 +58,6 @@ class MainActivity : AppCompatActivity() {
 
         importButton.setOnClickListener {
             viewModel.setIntent(MainIntent.OnImportTextFileEvent)
-        }
-
-        viewModel.viewData.observe(this) {
-            onViewDataReceived(it)
         }
     }
 
