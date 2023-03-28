@@ -201,14 +201,23 @@ class WaveformView(context: Context?, attrs: AttributeSet?) : View(context, attr
     private var isMovingStartBar = false
 
     var onSelectedRangeChanged: ((normalizedStartX: Float, normalizedEndX: Float) -> Unit)? = null
+    private val selectionBarTouchPadding = 30f
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
+                // Create RectF for the start bar with added padding
+                val startBarTouchRect = RectF(
+                    startBarRect.left - selectionBarTouchPadding,
+                    startBarRect.top - selectionBarTouchPadding,
+                    startBarRect.right + selectionBarTouchPadding,
+                    startBarRect.bottom + selectionBarTouchPadding
+                )
                 //calculate the distance from the touch point to the start and end of the selection bar
                 val startXDist = abs(selectedRangeStart - event.x)
                 val endXDist = abs(selectedRangeEnd - event.x)
-                isMovingStartBar = startXDist <= endXDist
+                // Check if the touch event is within the start bar touch target
+                isMovingStartBar = startBarTouchRect.contains(event.x, event.y) || startXDist <= endXDist
                 prevX = event.x
             }
             MotionEvent.ACTION_MOVE -> {
