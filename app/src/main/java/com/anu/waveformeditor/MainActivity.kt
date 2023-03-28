@@ -2,7 +2,6 @@ package com.anu.waveformeditor
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
@@ -10,11 +9,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.File
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var waveformView: WaveformView
@@ -58,6 +53,10 @@ class MainActivity : AppCompatActivity() {
         importButton.setOnClickListener {
             viewModel.setIntent(MainIntent.OnImportTextFileEvent)
         }
+
+        waveformView.onSelectedRangeChanged = { startX, endX ->
+            viewModel.setIntent(MainIntent.OnSelectedRangeChangeEvent(startX, endX))
+        }
     }
 
     private fun onViewDataReceived(it: MainData) {
@@ -80,6 +79,11 @@ class MainActivity : AppCompatActivity() {
         it.errorMessage?.getContentIfNotHandled()?.let {
             displayMessage(it)
         }
+
+        waveformView.updateNormalizedSelectedRange(
+            it.normalizedSelectedRangeStart,
+            it.normalizedSelectedRangeEnd
+        )
     }
 
     private fun exportSelectedRangeAsTextFile(range: List<Pair<Float, Float>>) {

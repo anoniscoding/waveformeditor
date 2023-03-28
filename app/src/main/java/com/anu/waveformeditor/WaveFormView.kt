@@ -91,6 +91,16 @@ class WaveformView(context: Context?, attrs: AttributeSet?) : View(context, attr
         selectedRangeEnd = endX
     }
 
+    fun updateNormalizedSelectedRange(normalizedStartX: Float, normalizedEndX: Float) {
+        //Ensure that the view has been measured and laid out before updating selected range
+        post {
+            val startXInPixel = normalizedStartX * waveformWidth
+            val endXInPixel = normalizedEndX * waveformWidth
+            setSelectedRange(startXInPixel, endXInPixel)
+            invalidate()
+        }
+    }
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         canvas ?: return
@@ -190,6 +200,8 @@ class WaveformView(context: Context?, attrs: AttributeSet?) : View(context, attr
     private var prevX: Float = 0f
     private var isMovingStartBar = false
 
+    var onSelectedRangeChanged: ((normalizedStartX: Float, normalizedEndX: Float) -> Unit)? = null
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -210,7 +222,12 @@ class WaveformView(context: Context?, attrs: AttributeSet?) : View(context, attr
             }
             MotionEvent.ACTION_UP -> {
                 isMovingStartBar = false
-                setSelectedRange(selectedRangeStart, selectedRangeEnd)
+                //Normalization is done to make the values independent of the view's dimensions, allowing them
+                // to be used in different contexts or screen sizes. The resulting values are between 0 and 1,
+                // where 0 represents the start of the waveform, and 1 represents the end.
+                val normalizedStartX = selectedRangeStart / waveformWidth
+                val normalizedEndX = selectedRangeEnd / waveformWidth
+                onSelectedRangeChanged?.invoke(normalizedStartX, normalizedEndX)
             }
         }
 

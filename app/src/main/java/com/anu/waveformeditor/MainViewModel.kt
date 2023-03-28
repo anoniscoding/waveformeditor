@@ -17,6 +17,7 @@ class MainViewModel(
     fun setIntent(intent: MainIntent) {
         when (intent) {
             is MainIntent.OnExportSelectedRangeEvent -> onExportSelectedRange(intent.selectedRange)
+            is MainIntent.OnSelectedRangeChangeEvent -> updateSelectedRange(intent.start, intent.end)
             MainIntent.OnImportTextFileEvent -> onImportTextFile()
         }
     }
@@ -39,8 +40,17 @@ class MainViewModel(
                 val waveData = parseWaveformDataUseCase(uri)
                 setWaveFormData(waveData)
             } catch (exception: Exception) {
-                _viewData.value = _viewData.value?.copy(errorMessage = OneTimeEvent(exception.message))
+                _viewData.value = _viewData.value?.copy(
+                    errorMessage = OneTimeEvent(exception.message)
+                )
             }
         }
+    }
+
+    private fun updateSelectedRange(start: Float, end: Float) {
+        _viewData.value = _viewData.value?.copy(
+            normalizedSelectedRangeStart = start,
+            normalizedSelectedRangeEnd = end
+        )
     }
 }
