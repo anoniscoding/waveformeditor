@@ -1,4 +1,4 @@
-package com.anu.waveformeditor
+package com.anu.waveformeditor.data
 
 import android.net.Uri
 

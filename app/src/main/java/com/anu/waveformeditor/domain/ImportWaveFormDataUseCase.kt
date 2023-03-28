@@ -1,6 +1,7 @@
-package com.anu.waveformeditor
+package com.anu.waveformeditor.domain
 
 import android.net.Uri
+import com.anu.waveformeditor.data.FileIORepository
 
 class ImportWaveFormDataUseCase (private val fileIORepository: FileIORepository) {
     suspend operator fun invoke(uri: Uri): List<Pair<Float, Float>> {

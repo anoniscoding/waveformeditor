@@ -1,7 +1,9 @@
-package com.anu.waveformeditor
+package com.anu.waveformeditor.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.anu.waveformeditor.domain.ExportWaveformDataUseCase
+import com.anu.waveformeditor.domain.ImportWaveFormDataUseCase
 
 class MainViewModelFactory(
     private val parseWaveformDataUseCase: ImportWaveFormDataUseCase,
