@@ -68,20 +68,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         it.message?.getContentIfNotHandled()?.let {
-            displayMessage(it)
+            toast(it)
         }
 
         waveformView.updateNormalizedSelectedRange(
             it.normalizedSelectedRangeStart,
             it.normalizedSelectedRangeEnd
         )
-    }
-
-    private fun displayMessage(text: String) {
-        Toast.makeText(
-            this,
-            text,
-            Toast.LENGTH_SHORT
-        ).show()
     }
 }
