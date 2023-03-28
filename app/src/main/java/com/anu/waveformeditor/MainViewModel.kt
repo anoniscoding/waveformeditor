@@ -5,10 +5,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel(
-    private val parseWaveformDataUseCase: ParseWaveFormDataUseCase
+    private val parseWaveformDataUseCase: ParseWaveFormDataUseCase,
+    private val exportWaveformDataUseCase: ExportWaveformDataUseCase
 ): ViewModel() {
 
     private val _viewData = MutableLiveData(MainData())
@@ -23,11 +27,20 @@ class MainViewModel(
     }
 
     private fun setWaveFormData(waveData: List<Pair<Float, Float>>) {
-        _viewData.value = _viewData.value?.copy(waveformData = waveData)
+        _viewData.value = _viewData.value?.copy(
+            waveformData = waveData,
+            normalizedSelectedRangeStart = 0f,
+            normalizedSelectedRangeEnd = 1f
+        )
     }
 
     private fun onExportSelectedRange(selectedRange: List<Pair<Float, Float>>) {
-        _viewData.value = _viewData.value?.copy(selectedRange = OneTimeEvent(selectedRange))
+        launchRequest {
+            val fileName = exportWaveformDataUseCase(selectedRange)
+            _viewData.value = _viewData.value?.copy(
+                message = OneTimeEvent("Exported $fileName successfully")
+            )
+        }
     }
 
     private fun onImportTextFile() {
@@ -35,13 +48,19 @@ class MainViewModel(
     }
 
     fun readAndSetWaveformData(uri: Uri) {
-        viewModelScope.launch {
+        launchRequest {
+            val waveData = parseWaveformDataUseCase(uri)
+            setWaveFormData(waveData)
+        }
+    }
+
+    private fun launchRequest(block: suspend () -> Unit): Job {
+        return viewModelScope.launch {
             try {
-                val waveData = parseWaveformDataUseCase(uri)
-                setWaveFormData(waveData)
+                block()
             } catch (exception: Exception) {
                 _viewData.value = _viewData.value?.copy(
-                    errorMessage = OneTimeEvent(exception.message)
+                    message = OneTimeEvent(exception.message)
                 )
             }
         }

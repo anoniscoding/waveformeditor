@@ -31,8 +31,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val useCase = ParseWaveFormDataUseCase(ContentResolverHelperImpl(contentResolver))
-        viewModel = ViewModelProvider(this, MainViewModelFactory(useCase))[MainViewModel::class.java]
+        val parseUseCase = ParseWaveFormDataUseCase(ContentResolverHelperImpl(contentResolver, this))
+        val exportUseCase = ExportWaveformDataUseCase(ContentResolverHelperImpl(contentResolver, this))
+        viewModel = ViewModelProvider(this, MainViewModelFactory(parseUseCase, exportUseCase))[MainViewModel::class.java]
 
         waveformView = findViewById(R.id.waveform_view)
         exportButton = findViewById(R.id.export_button)
@@ -68,15 +69,7 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-        it.selectedRange?.getContentIfNotHandled()?.let { range ->
-            if (range.isEmpty()) {
-                displayMessage(getString(R.string.label_no_selected_range))
-                return@let
-            }
-            exportSelectedRangeAsTextFile(range)
-        }
-
-        it.errorMessage?.getContentIfNotHandled()?.let {
+        it.message?.getContentIfNotHandled()?.let {
             displayMessage(it)
         }
 
@@ -84,17 +77,6 @@ class MainActivity : AppCompatActivity() {
             it.normalizedSelectedRangeStart,
             it.normalizedSelectedRangeEnd
         )
-    }
-
-    private fun exportSelectedRangeAsTextFile(range: List<Pair<Float, Float>>) {
-        val content = range.joinToString("\n") { "${it.first} ${it.second}" }
-        val filename = "selected_range_${System.currentTimeMillis()}.txt"
-        val downloadsDir =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val file = File(downloadsDir, filename)
-        file.writeText(content)
-
-        displayMessage(getString(R.string.label_exported_wave_to_filename, filename))
     }
 
     private fun displayMessage(text: String) {
