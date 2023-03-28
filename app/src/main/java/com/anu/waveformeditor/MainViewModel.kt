@@ -5,13 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainViewModel(
-    private val parseWaveformDataUseCase: ParseWaveFormDataUseCase,
+    private val importWaveformDataUseCase: ImportWaveFormDataUseCase,
     private val exportWaveformDataUseCase: ExportWaveformDataUseCase
 ): ViewModel() {
 
@@ -49,7 +47,7 @@ class MainViewModel(
 
     fun readAndSetWaveformData(uri: Uri) {
         launchRequest {
-            val waveData = parseWaveformDataUseCase(uri)
+            val waveData = importWaveformDataUseCase(uri)
             setWaveFormData(waveData)
         }
     }

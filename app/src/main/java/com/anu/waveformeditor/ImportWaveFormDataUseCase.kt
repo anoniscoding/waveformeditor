@@ -2,9 +2,9 @@ package com.anu.waveformeditor
 
 import android.net.Uri
 
-class ParseWaveFormDataUseCase (private val contentResolverHelper: ContentResolverHelper) {
+class ImportWaveFormDataUseCase (private val fileIORepository: FileIORepository) {
     suspend operator fun invoke(uri: Uri): List<Pair<Float, Float>> {
-        val data = contentResolverHelper.readTextFromUri(uri)
+        val data = fileIORepository.readTextFromUri(uri)
         return parseWaveformData(data)
     }
 

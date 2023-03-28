@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 class MainViewModelFactory(
-    private val parseWaveformDataUseCase: ParseWaveFormDataUseCase,
+    private val parseWaveformDataUseCase: ImportWaveFormDataUseCase,
     private val exportWaveformDataUseCase: ExportWaveformDataUseCase
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

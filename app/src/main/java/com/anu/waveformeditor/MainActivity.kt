@@ -4,12 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
-import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private lateinit var waveformView: WaveformView
@@ -31,8 +29,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val parseUseCase = ParseWaveFormDataUseCase(ContentResolverHelperImpl(contentResolver, this))
-        val exportUseCase = ExportWaveformDataUseCase(ContentResolverHelperImpl(contentResolver, this))
+        val parseUseCase = ImportWaveFormDataUseCase(FileIORepositoryImpl(contentResolver, this))
+        val exportUseCase = ExportWaveformDataUseCase(FileIORepositoryImpl(contentResolver, this))
         viewModel = ViewModelProvider(this, MainViewModelFactory(parseUseCase, exportUseCase))[MainViewModel::class.java]
 
         waveformView = findViewById(R.id.waveform_view)

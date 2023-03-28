@@ -3,7 +3,6 @@ package com.anu.waveformeditor
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
@@ -12,10 +11,10 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.OutputStreamWriter
 
-class ContentResolverHelperImpl(
+class FileIORepositoryImpl(
     private val contentResolver: ContentResolver,
     private val context: Context,
-) : ContentResolverHelper {
+) : FileIORepository {
     override suspend fun readTextFromUri(uri: Uri): String = withContext(Dispatchers.IO) {
         contentResolver.openInputStream(uri)?.bufferedReader().use { it?.readText() } ?: ""
     }
