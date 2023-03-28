@@ -33,9 +33,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val parseUseCase = ImportWaveFormDataUseCase(FileIORepositoryImpl(contentResolver, this))
+        val importUseCase = ImportWaveFormDataUseCase(FileIORepositoryImpl(contentResolver, this))
         val exportUseCase = ExportWaveformDataUseCase(FileIORepositoryImpl(contentResolver, this))
-        viewModel = ViewModelProvider(this, MainViewModelFactory(parseUseCase, exportUseCase))[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, MainViewModelFactory(importUseCase, exportUseCase))[MainViewModel::class.java]
 
         waveformView = findViewById(R.id.waveform_view)
         exportButton = findViewById(R.id.export_button)
