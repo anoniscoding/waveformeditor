@@ -3,10 +3,12 @@ package com.anu.waveformeditor
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-class MainViewModelFactory() : ViewModelProvider.Factory {
+class MainViewModelFactory(
+    private val parseWaveformDataUseCase: ParseWaveFormDataUseCase
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel() as T
+            return MainViewModel(parseWaveformDataUseCase) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

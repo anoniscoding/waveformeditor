@@ -25,11 +25,9 @@ class MainActivity : AppCompatActivity() {
     private val importTextFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                lifecycleScope.launch {
-                    val fileUri = result?.data?.data
-                    fileUri?.let { uri ->
-                        viewModel.setWaveFormData(parseWaveformData(uri))
-                    }
+                val fileUri = result?.data?.data
+                fileUri?.let { uri ->
+                    viewModel.readAndSetWaveformData(uri)
                 }
             }
         }
@@ -38,7 +36,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewModel = ViewModelProvider(this, MainViewModelFactory())[MainViewModel::class.java]
+        val useCase = ParseWaveFormDataUseCase(ContentResolverHelperImpl(contentResolver))
+        viewModel = ViewModelProvider(this, MainViewModelFactory(useCase))[MainViewModel::class.java]
 
         waveformView = findViewById(R.id.waveform_view)
         exportButton = findViewById(R.id.export_button)
@@ -77,6 +76,10 @@ class MainActivity : AppCompatActivity() {
             }
             exportSelectedRangeAsTextFile(range)
         }
+
+        it.errorMessage?.getContentIfNotHandled()?.let {
+            displayMessage(it)
+        }
     }
 
     private fun exportSelectedRangeAsTextFile(range: List<Pair<Float, Float>>) {
@@ -90,32 +93,11 @@ class MainActivity : AppCompatActivity() {
         displayMessage(getString(R.string.label_exported_wave_to_filename, filename))
     }
 
-    private suspend fun parseWaveformData(uri: Uri): List<Pair<Float, Float>> {
-        return withContext(Dispatchers.IO) {
-            val waveformData = mutableListOf<Pair<Float, Float>>()
-            contentResolver.openInputStream(uri)?.bufferedReader()?.useLines { lines ->
-                lines.forEach { line ->
-                    val verticalRange = line.trim().split("\\s+".toRegex())
-                    if (verticalRange.size == MAX_WAVE_PAIR_LENGTH) {
-                        val min = verticalRange.first().toFloatOrNull() ?: 0f
-                        val max = verticalRange.last().toFloatOrNull() ?: 0f
-                        waveformData.add(min to max)
-                    }
-                }
-            }
-            waveformData
-        }
-    }
-
     private fun displayMessage(text: String) {
         Toast.makeText(
             this,
             text,
             Toast.LENGTH_SHORT
         ).show()
-    }
-
-    companion object {
-        const val MAX_WAVE_PAIR_LENGTH = 2
     }
 }
