@@ -50,6 +50,9 @@ class WaveformView(context: Context?, attrs: AttributeSet?) : View(context, attr
 
     private val startBarRect = RectF()
     private val endBarRect = RectF()
+    private val waveformPath = Path()
+    private val selectedPath = Path()
+    private  val startBarTouchRect = RectF()
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -116,7 +119,8 @@ class WaveformView(context: Context?, attrs: AttributeSet?) : View(context, attr
     }
 
     private fun drawWaveForm(canvas: Canvas) {
-        val waveformPath = Path()
+        waveformPath.reset()
+
         var currentX = waveformStartX
 
         val midPointOfViewHeight = height / 2f
@@ -163,7 +167,7 @@ class WaveformView(context: Context?, attrs: AttributeSet?) : View(context, attr
 
         //Draw the selected part of the waveform
         waveformPaint.color = Color.BLUE
-        val selectedPath = Path()
+        selectedPath.reset()
         //Add a rectangle to the selected path that covers the selected region of the waveform.
         selectedPath.addRect(RectF(selectedRangeStart, waveformStartY, selectedRangeEnd, waveformEndY), Path.Direction.CW)
         //Combine the selected path with the waveform path using the intersection operation,
@@ -207,12 +211,12 @@ class WaveformView(context: Context?, attrs: AttributeSet?) : View(context, attr
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
                 // Create RectF for the start bar with added padding
-                val startBarTouchRect = RectF(
-                    startBarRect.left - selectionBarTouchPadding,
-                    startBarRect.top - selectionBarTouchPadding,
-                    startBarRect.right + selectionBarTouchPadding,
-                    startBarRect.bottom + selectionBarTouchPadding
-                )
+                startBarTouchRect.apply {
+                    left = startBarRect.left - selectionBarTouchPadding
+                    top = startBarRect.top - selectionBarTouchPadding
+                    right = startBarRect.right + selectionBarTouchPadding
+                    bottom = startBarRect.bottom + selectionBarTouchPadding
+                }
                 //calculate the distance from the touch point to the start and end of the selection bar
                 val startXDist = abs(selectedRangeStart - event.x)
                 val endXDist = abs(selectedRangeEnd - event.x)
