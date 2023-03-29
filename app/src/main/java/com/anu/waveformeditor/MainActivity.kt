@@ -99,22 +99,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun onViewDataReceived(it: MainData) {
-        waveformView.setWaveformData(it.waveformData)
+    private fun onViewDataReceived(viewData: MainData) {
+        waveformView.setWaveformData(viewData.waveformData)
 
-        it.isOpenDirectory?.getContentIfNotHandled()?.let {
+        viewData.isOpenDirectory?.getContentIfNotHandled()?.let {
             importTextFileLauncher.launch(Intent(Intent.ACTION_GET_CONTENT).apply {
                 type = "text/plain"
             })
         }
 
-        it.message?.getContentIfNotHandled()?.let {
+        viewData.message?.getContentIfNotHandled()?.let {
             toast(it)
         }
 
         waveformView.updateSelectedRange(
-            it.normalizedSelectedRangeStart,
-            it.normalizedSelectedRangeEnd
+            viewData.normalizedSelectedRangeStart,
+            viewData.normalizedSelectedRangeEnd
         )
     }
 }
