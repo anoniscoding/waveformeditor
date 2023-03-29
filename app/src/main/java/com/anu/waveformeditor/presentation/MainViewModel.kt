@@ -24,7 +24,6 @@ class MainViewModel(
             is MainIntent.OnExportSelectedRangeEvent -> onExportSelectedRange(intent.selectedRange)
             is MainIntent.OnSelectedRangeChangeEvent -> updateSelectedRange(intent.start, intent.end)
             MainIntent.OnImportTextFileEvent -> onImportTextFile()
-            else -> {}
         }
     }
 
