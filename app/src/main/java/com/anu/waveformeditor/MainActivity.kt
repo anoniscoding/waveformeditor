@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
             toast(it)
         }
 
-        waveformView.updateNormalizedSelectedRange(
+        waveformView.updateSelectedRange(
             it.normalizedSelectedRangeStart,
             it.normalizedSelectedRangeEnd
         )

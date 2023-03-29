@@ -94,7 +94,7 @@ class WaveformView(context: Context?, attrs: AttributeSet?) : View(context, attr
         selectedRangeEnd = endX
     }
 
-    fun updateNormalizedSelectedRange(normalizedStartX: Float, normalizedEndX: Float) {
+    fun updateSelectedRange(normalizedStartX: Float, normalizedEndX: Float) {
         //Ensure that the view has been measured and laid out before updating selected range
         post {
             val startXInPixel = normalizedStartX * waveformWidth
