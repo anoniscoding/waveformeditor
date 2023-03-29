@@ -1,4 +1,6 @@
-package com.anu.waveformeditor
+package com.anu.waveformeditor.presentation
+
+import com.anu.waveformeditor.OneTimeEvent
 
 sealed class  MainIntent {
     object OnImportTextFileEvent: MainIntent()
