@@ -95,7 +95,11 @@ class MainActivity : AppCompatActivity() {
         if (hasPermission) {
             viewModel.setIntent(MainIntent.OnExportSelectedRangeEvent(waveformView.getAllPairsInSelectedRange()))
         } else {
-            writePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                toast(getString(R.string.label_write_permission_rationale))
+            } else {
+                writePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
         }
     }
 
