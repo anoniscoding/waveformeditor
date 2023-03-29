@@ -24,13 +24,13 @@ class FileIORepositoryImpl(
 
     override suspend fun writeWaveFormDataToUri(waveformData: List<Pair<Float, Float>>): String {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            writeWaveFormDataToUriForAPIAboveQ(waveformData)
+            writeDataToUriForAPIAboveQ(waveformData)
         } else {
-            writeWaveFormDataToUriForAPIBelowQ(waveformData)
+            writeDataToUriForAPIBelowQ(waveformData)
         }
     }
 
-    private suspend fun writeWaveFormDataToUriForAPIBelowQ(waveformData: List<Pair<Float, Float>>): String {
+    private suspend fun writeDataToUriForAPIBelowQ(waveformData: List<Pair<Float, Float>>): String {
         return withContext(Dispatchers.IO) {
             val (filename, uri) = getFilenameWithUri()
             writeToFile(uri, waveformData)
@@ -48,7 +48,7 @@ class FileIORepositoryImpl(
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private suspend fun writeWaveFormDataToUriForAPIAboveQ(waveformData: List<Pair<Float, Float>>): String {
+    private suspend fun writeDataToUriForAPIAboveQ(waveformData: List<Pair<Float, Float>>): String {
         val fileName = "selected_waveform_${System.currentTimeMillis()}.txt"
 
         return withContext(Dispatchers.IO) {
