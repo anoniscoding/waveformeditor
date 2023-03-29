@@ -82,23 +82,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onExportButtonClicked() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            viewModel.setIntent(MainIntent.OnExportSelectedRangeEvent(waveformView.getAllPairsInSelectedRange()))
-            return
-        }
-
-        val hasPermission = ActivityCompat.checkSelfPermission(
-            this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
-
-        if (hasPermission) {
-            viewModel.setIntent(MainIntent.OnExportSelectedRangeEvent(waveformView.getAllPairsInSelectedRange()))
-        } else {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                toast(getString(R.string.label_write_permission_rationale))
-            } else {
-                writePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                viewModel.setIntent(MainIntent.OnExportSelectedRangeEvent(waveformView.getAllPairsInSelectedRange()))
+            }
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED -> {
+                viewModel.setIntent(MainIntent.OnExportSelectedRangeEvent(waveformView.getAllPairsInSelectedRange()))
+            }
+            else -> {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    toast(getString(R.string.label_write_permission_rationale))
+                } else {
+                    writePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
             }
         }
     }
