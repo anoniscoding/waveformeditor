@@ -37,13 +37,6 @@ class MainViewModel(
     }
 
     private fun onExportSelectedRange(selectedRange: List<Pair<Float, Float>>) {
-        if (selectedRange.isEmpty()){
-            _viewData.value = _viewData.value?.copy(
-                message = OneTimeEvent("No selected region")
-            )
-            return
-        }
-
         launchRequest {
             val fileName = exportWaveformDataUseCase(selectedRange)
             _viewData.value = _viewData.value?.copy(
