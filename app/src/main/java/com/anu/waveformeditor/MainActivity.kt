@@ -1,11 +1,15 @@
 package com.anu.waveformeditor
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.anu.waveformeditor.data.FileIORepositoryImpl
 import com.anu.waveformeditor.domain.ExportWaveformDataUseCase
@@ -29,13 +33,26 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    private val writePermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                viewModel.setIntent(MainIntent.OnExportSelectedRangeEvent(waveformView.getAllPairsInSelectedRange()))
+            } else {
+                toast(getString(R.string.label_write_permission_is_needed))
+            }
+        }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val importUseCase = ImportWaveFormDataUseCase(FileIORepositoryImpl(contentResolver, this))
-        val exportUseCase = ExportWaveformDataUseCase(FileIORepositoryImpl(contentResolver, this))
-        viewModel = ViewModelProvider(this, MainViewModelFactory(importUseCase, exportUseCase))[MainViewModel::class.java]
+        val importUseCase = ImportWaveFormDataUseCase(FileIORepositoryImpl( this))
+        val exportUseCase = ExportWaveformDataUseCase(FileIORepositoryImpl( this))
+        viewModel = ViewModelProvider(
+            this,
+            MainViewModelFactory(importUseCase, exportUseCase)
+        )[MainViewModel::class.java]
 
         waveformView = findViewById(R.id.waveform_view)
         exportButton = findViewById(R.id.export_button)
@@ -50,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         exportButton.setOnClickListener {
-            viewModel.setIntent(MainIntent.OnExportSelectedRangeEvent(waveformView.getAllPairsInSelectedRange()))
+            onExportButtonClicked()
         }
 
         importButton.setOnClickListener {
@@ -59,6 +76,24 @@ class MainActivity : AppCompatActivity() {
 
         waveformView.onSelectedRangeChanged = { startX, endX ->
             viewModel.setIntent(MainIntent.OnSelectedRangeChangeEvent(startX, endX))
+        }
+    }
+
+    private fun onExportButtonClicked() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            viewModel.setIntent(MainIntent.OnExportSelectedRangeEvent(waveformView.getAllPairsInSelectedRange()))
+            return
+        }
+
+        val hasPermission = ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermission) {
+            viewModel.setIntent(MainIntent.OnExportSelectedRangeEvent(waveformView.getAllPairsInSelectedRange()))
+        } else {
+            writePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
 
