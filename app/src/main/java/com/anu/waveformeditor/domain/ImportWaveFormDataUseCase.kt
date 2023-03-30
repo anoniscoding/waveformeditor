@@ -15,16 +15,16 @@ class ImportWaveFormDataUseCase (private val fileIORepository: FileIORepository)
             .map { line ->
                 val verticalRange = line.split("\\s+".toRegex()).map {
                     it.trim().toFloatOrNull()
-                        ?: throw IllegalArgumentException(INVALID_FORMAT)
+                        ?: throw IllegalArgumentException(INVALID_MESSAGE)
                 }
                 if (verticalRange.size != MAX_WAVE_PAIR_LENGTH) {
-                    throw IllegalArgumentException(INVALID_FORMAT)
+                    throw IllegalArgumentException(INVALID_MESSAGE)
                 }
                 Pair(verticalRange.first(), verticalRange.last())
             }
 
         if (result.isEmpty()) {
-            throw IllegalArgumentException(EMPTY_FORMAT)
+            throw IllegalArgumentException(EMPTY_MESSAGE)
         }
 
         return result
@@ -32,7 +32,7 @@ class ImportWaveFormDataUseCase (private val fileIORepository: FileIORepository)
 
     companion object {
         const val MAX_WAVE_PAIR_LENGTH = 2
-        const val INVALID_FORMAT = "Invalid waveform data format"
-        const val EMPTY_FORMAT = "Waveform data is empty"
+        const val INVALID_MESSAGE = "Invalid waveform data format"
+        const val EMPTY_MESSAGE = "Waveform data is empty"
     }
 }
