@@ -179,18 +179,18 @@ class WaveformView(context: Context?, attrs: AttributeSet?) : View(context, attr
     private fun drawSelectionBars(canvas: Canvas) {
         val startX = selectedRangeStart.coerceIn(waveformStartX, waveformEndX)
         val endX = selectedRangeEnd.coerceIn(waveformStartX, waveformEndX)
-
+        val halfWidthOfSelectionBar = selectionBarWidth / 2f
         // Update the positions of the start and end bar RectFs
         startBarRect.apply {
-            left = max(startX - selectionBarWidth / 2f, waveformStartX)
-            right = min(startX + selectionBarWidth / 2f, waveformEndX)
+            left = max(startX - halfWidthOfSelectionBar, waveformStartX)
+            right = min(startX + halfWidthOfSelectionBar, waveformEndX)
             top = waveformStartY
             bottom = waveformEndY
         }
 
         endBarRect.apply {
-            left = max(endX - selectionBarWidth / 2f, waveformStartX)
-            right = min(endX + selectionBarWidth / 2f, waveformEndX)
+            left = max(endX - halfWidthOfSelectionBar, waveformStartX)
+            right = min(endX + halfWidthOfSelectionBar, waveformEndX)
             top = waveformStartY
             bottom = waveformEndY
         }
