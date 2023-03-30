@@ -184,15 +184,15 @@ class WaveformView(context: Context?, attrs: AttributeSet?) : View(context, attr
         startBarRect.apply {
             left = max(startX - selectionBarWidth / 2f, waveformStartX)
             right = min(startX + selectionBarWidth / 2f, waveformEndX)
-            top = height / 2f - waveformHeight
-            bottom = height / 2f + waveformHeight
+            top = waveformStartY
+            bottom = waveformEndY
         }
 
         endBarRect.apply {
             left = max(endX - selectionBarWidth / 2f, waveformStartX)
             right = min(endX + selectionBarWidth / 2f, waveformEndX)
-            top = height / 2f - waveformHeight
-            bottom = height / 2f + waveformHeight
+            top = waveformStartY
+            bottom = waveformEndY
         }
 
         // Draw the selection bars
